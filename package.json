@@ -1,0 +1,15 @@
+{
+  "name": "shopper",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Rafael Alonso <rafaelalonsobarbosa@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "database": "cd app && cd backend && npx sequelize-cli db:create && npx sequelize-cli db:migrate",
+    "postinstall": "npm run install:apps",
+    "install:apps": "./apps_install.sh",
+    "compose:up": "(cd app && docker compose up -d --build)",
+    "compose:down": "(cd app && docker compose down --remove-orphans)",
+    "db:seed": "ts-node prisma/seed.ts"
+  }
+}
