@@ -1,0 +1,71 @@
+services:
+  # Serviço do banco de dados PostgreSQL
+  db:
+    image: postgres:latest
+    container_name: postgres_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: mobility_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      timeout: 10s
+      retries: 5
+    networks:
+      - app_network
+
+  # Serviço do backend Node.js com Express
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: express_backend
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@db:5432/mobility_db
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    healthcheck:
+      test: [ "CMD", "lsof", "-t", "-i:8080" ]
+      timeout: 10s
+      retries: 5
+    networks:
+      - app_network
+
+  # Serviço do frontend React com Vite
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: vite_frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    healthcheck:
+      test: [ "CMD", "lsof", "-t", "-i:80" ]
+      timeout: 10s
+      retries: 5
+    networks:
+      - app_network
+
+# Volumes para persistência de dados
+volumes:
+  db_data:
+
+    # Rede para os serviços
+networks:
+  app_network:
