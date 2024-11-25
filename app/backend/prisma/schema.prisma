@@ -15,19 +15,6 @@ datasource db {
 
 model User {
   id        Int      @id @default(autoincrement())
-  email     String   @unique
-  password  String
+  name      String   @unique
   createdAt DateTime @default(now())
-}
-
-model Driver {
-  id          Int      @id @default(autoincrement())
-  name        String
-  description String
-  carName     String
-  evaluation  String
-  rate        String
-  kmMinimum   Int
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now())
 }
