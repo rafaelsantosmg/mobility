@@ -5,8 +5,8 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   plugins: [react()],
   server: {
-    host: '0.0.0.0', // Permite conexões externas
-    port: 80,      // Porta configurada no docker-compose.yml
-    strictPort: true // Garante que a porta seja fixa
+    host: '0.0.0.0',
+    port: 80,
+    strictPort: true
   },
 })
