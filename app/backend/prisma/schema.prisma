@@ -13,8 +13,53 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
+model Customer {
   id        Int      @id @default(autoincrement())
   name      String   @unique
-  createdAt DateTime @default(now())
+  createdAt DateTime @default(now()) @map("created_at")
+  Review    Review[]
+
+  @@map("customer")
+}
+
+model Driver {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  vehicle     String
+  ratePerKm   Float    @map("rate_per_km")
+  minKm       Float    @map("min_km")
+  createdAt   DateTime @default(now()) @map("created_at")
+  review      Review[]
+  ride        Ride[]
+
+  @@map("driver")
+}
+
+model Review {
+  id         Int      @id @default(autoincrement())
+  comment    String
+  rating     Float
+  createdAt  DateTime @default(now()) @map("created_at")
+  customerId Int      @map("customer_id")
+  driverId   Int      @map("driver_id")
+  customer   Customer @relation(fields: [customerId], references: [id])
+  driver     Driver   @relation(fields: [driverId], references: [id])
+
+  @@map("review")
+}
+
+model Ride {
+  id          Int      @id @default(autoincrement())
+  date        DateTime @default(now())
+  origin      String
+  destination String
+  distance    Float
+  duration    Float
+  createdAt   DateTime @default(now()) @map("created_at")
+  driverId    String   @map("driver_id")
+  customerId  String   @map("customer_id")
+  driver      Driver[]
+
+  @@map("ride")
 }

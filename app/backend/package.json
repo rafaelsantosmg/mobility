@@ -21,10 +21,14 @@
     "prisma": "^5.22.0"
   },
   "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/node": "^22.9.1",
+    "eslint-config-prettier": "^9.1.0",
     "nodemon": "^3.1.7",
+    "prettier": "^3.4.1",
+    "prettier-plugin-prisma": "^5.0.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.2"
   }
