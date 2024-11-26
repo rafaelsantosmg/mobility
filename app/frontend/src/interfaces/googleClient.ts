@@ -3,12 +3,12 @@ interface Review {
   comment: string;
 }
 
-interface Option {
+export interface Option {
   id: number;
   name: string;
   description: string;
   vehicle: string;
-  review: Review;
+  review: Review[];
   value: number;
 }
 
@@ -86,12 +86,32 @@ interface RouteResponse {
 }
 
 export interface EstimatedResponse {
-  estimatedPrice: {
-    origin: Location;
-    destination: Location;
-    distance: number;
-    duration: string;
-    options: Option[];
-    routeResponse: RouteResponse;
+  data: {
+    estimatedPrice: {
+      origin: Location;
+      destination: Location;
+      distance: number;
+      duration: string;
+      options: Option[];
+      routeResponse: RouteResponse;
+    };
   };
+}
+
+export interface OriginRequest {
+  lat: number;
+  lng: number;
+}
+
+export interface DestinationRequest {
+  lat: number;
+  lng: number;
+}
+
+export interface EstimatedPrice {
+  origin: Location;
+  destination: Location;
+  distance: number;
+  duration: string;
+  options: Option[];
 }
