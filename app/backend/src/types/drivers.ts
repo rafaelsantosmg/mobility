@@ -1,14 +1,31 @@
-export type Review = {
+export type TReview = {
   rating: number
   comment: string
 }
 
-export interface Driver {
+export type TReviews = Array<TReview>
+
+export type TDriverPrisma = {
   id: number
   name: string
   description: string
   vehicle: string
-  review: Review
-  rate_per_km: number
-  min_km: number
+  ratePerKm: number
+  minKm: number
+  review: TReview
 }
+
+export type TDriversPrisma = Array<TDriverPrisma>
+
+export type TDriver = {
+  id: number
+  name: string
+  description: string
+  vehicle: string
+  review: TReview
+  ratePerKm?: number
+  minKm?: number
+  value?: number
+}
+
+export type TDrivers = Array<TDriver>
