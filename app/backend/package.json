@@ -7,8 +7,7 @@
     "dev": "nodemon src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
-    "seed:user": "ts-node prisma/seedUser.ts",
-    "seed:driver": "ts-node prisma/seedDriver.ts",
+    "seed": "ts-node prisma/seed.ts",
     "prisma:generate": "npx prisma generate",
     "prisma:migrate": "npx prisma migrate dev"
   },
