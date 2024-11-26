@@ -3,11 +3,11 @@ import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { EstimatedResponse } from '../interfaces/googleClient';
 import api from '../services';
+import { useAppContext } from './useAppContext';
 
 type UseRideReturn = {
   origin: string;
   destination: string;
-  estimatedPrice: number | null;
   onOriginChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onDestinationChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onEstimateRide: () => Promise<void>;
@@ -16,7 +16,8 @@ type UseRideReturn = {
 const useRide = (): UseRideReturn => {
   const [origin, setOrigin] = useState<string>('');
   const [destination, setDestination] = useState<string>('');
-  const [estimatedPrice, setEstimatedPrice] = useState<number | null>(null);
+  const { setEstimatedPrice, setOriginRequest, setDestinationRequest } =
+    useAppContext();
 
   const onOriginChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setOrigin(event.target.value);
@@ -29,9 +30,25 @@ const useRide = (): UseRideReturn => {
   const onEstimateRide = async () => {
     try {
       const request = { origin, destination, customer_id: '1' };
-      const { data } = await api.post('/ride/estimate', request);
-      const response: EstimatedResponse = data;
-      console.log(response.estimatedPrice);
+      const { data }: EstimatedResponse = await api.post(
+        '/ride/estimate',
+        request
+      );
+      setEstimatedPrice({
+        origin: data.estimatedPrice.origin,
+        destination: data.estimatedPrice.destination,
+        distance: data.estimatedPrice.distance,
+        duration: data.estimatedPrice.duration,
+        options: data.estimatedPrice.options,
+      });
+      setOriginRequest({
+        lat: data.estimatedPrice.origin.latitude,
+        lng: data.estimatedPrice.origin.longitude,
+      });
+      setDestinationRequest({
+        lat: data.estimatedPrice.destination.latitude,
+        lng: data.estimatedPrice.destination.longitude,
+      });
     } catch (error: any) {
       if (axios.isAxiosError(error)) {
         if (error.code === 'ERR_NETWORK') {
@@ -47,14 +64,11 @@ const useRide = (): UseRideReturn => {
         console.error('Erro não reconhecido:', error);
       }
     }
-    const estimated = 100; // Exemplo de estimativa
-    setEstimatedPrice(estimated);
   };
 
   return {
     origin,
     destination,
-    estimatedPrice,
     onOriginChange,
     onDestinationChange,
     onEstimateRide,
