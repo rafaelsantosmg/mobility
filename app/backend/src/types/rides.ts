@@ -48,3 +48,21 @@ export type TRideData = {
   }
   routeReponse?: any
 }
+
+export type TBodyRideEstimate = {
+  origin: string
+  destination: string
+}
+
+export type TBodyRideHistory = {
+  customer_id: string
+  origin: string
+  destination: string
+  distance: number
+  duration: string
+  driver: {
+    id: string
+    name: string
+  }
+  value: number
+}
