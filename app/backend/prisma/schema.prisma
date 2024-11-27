@@ -51,14 +51,14 @@ model Review {
 
 model Ride {
   id          Int      @id @default(autoincrement())
-  date        DateTime @default(now())
   origin      String
   destination String
   distance    Float
-  duration    Float
+  duration    String
   createdAt   DateTime @default(now()) @map("created_at")
-  driverId    String   @map("driver_id")
-  customerId  String   @map("customer_id")
+  driverId    Int      @map("driver_id")
+  customerId  Int      @map("customer_id")
+  value       Float
   driver      Driver[]
 
   @@map("ride")
