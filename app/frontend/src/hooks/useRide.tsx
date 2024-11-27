@@ -2,6 +2,7 @@ import axios from 'axios';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { EstimatedResponse } from '../interfaces/googleClient';
+import { ConfirmRidePayload } from '../interfaces/ride';
 import api from '../services';
 import { useAppContext } from './useAppContext';
 
@@ -11,12 +12,13 @@ type UseRideReturn = {
   onOriginChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onDestinationChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onEstimateRide: () => Promise<void>;
+  onConfirmRide: (payload: ConfirmRidePayload) => Promise<void>;
 };
 
 const useRide = (): UseRideReturn => {
   const [origin, setOrigin] = useState<string>('');
   const [destination, setDestination] = useState<string>('');
-  const { setEstimatedPrice, setOriginRequest, setDestinationRequest } =
+  const { setEstimatedRide, setOriginRequest, setDestinationRequest } =
     useAppContext();
 
   const onOriginChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,21 +36,44 @@ const useRide = (): UseRideReturn => {
         '/ride/estimate',
         request
       );
-      setEstimatedPrice({
-        origin: data.estimatedPrice.origin,
-        destination: data.estimatedPrice.destination,
-        distance: data.estimatedPrice.distance,
-        duration: data.estimatedPrice.duration,
-        options: data.estimatedPrice.options,
+      setEstimatedRide({
+        origin: data.estimatedRide.origin,
+        destination: data.estimatedRide.destination,
+        distance: data.estimatedRide.distance,
+        duration: data.estimatedRide.duration,
+        options: data.estimatedRide.options,
+        routeResponse: data.estimatedRide.routeResponse,
       });
       setOriginRequest({
-        lat: data.estimatedPrice.origin.latitude,
-        lng: data.estimatedPrice.origin.longitude,
+        lat: data.estimatedRide.origin.latitude,
+        lng: data.estimatedRide.origin.longitude,
       });
       setDestinationRequest({
-        lat: data.estimatedPrice.destination.latitude,
-        lng: data.estimatedPrice.destination.longitude,
+        lat: data.estimatedRide.destination.latitude,
+        lng: data.estimatedRide.destination.longitude,
       });
+    } catch (error: any) {
+      if (axios.isAxiosError(error)) {
+        if (error.code === 'ERR_NETWORK') {
+          toast.error(
+            'Erro de conexão. Verifique sua rede ou se o servidor está ativo.'
+          );
+        } else if (error.response) {
+          toast.error(error.response.data.error_description);
+        } else {
+          toast.error('Erro inesperado. Tente novamente.');
+        }
+      } else {
+        console.error('Erro não reconhecido:', error);
+      }
+    }
+  };
+
+  const onConfirmRide = async (payload: ConfirmRidePayload) => {
+    try {
+      const request = payload;
+      await api.post('/ride/confirm', request);
+      toast.success('Sua viagem foi confirmada com sucesso!');
     } catch (error: any) {
       if (axios.isAxiosError(error)) {
         if (error.code === 'ERR_NETWORK') {
@@ -72,6 +97,7 @@ const useRide = (): UseRideReturn => {
     onOriginChange,
     onDestinationChange,
     onEstimateRide,
+    onConfirmRide,
   };
 };
 

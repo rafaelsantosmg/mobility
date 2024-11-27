@@ -1,14 +1,14 @@
 import React, { createContext, ReactNode, useEffect, useState } from 'react';
 import {
   DestinationRequest,
-  EstimatedPrice,
+  EstimatedRide,
   OriginRequest,
 } from '../interfaces/googleClient';
 
 export interface AppContextType {
-  estimatedPrice: EstimatedPrice | undefined;
-  setEstimatedPrice: React.Dispatch<
-    React.SetStateAction<EstimatedPrice | undefined>
+  estimatedRide: EstimatedRide | undefined;
+  setEstimatedRide: React.Dispatch<
+    React.SetStateAction<EstimatedRide | undefined>
   >;
   originRequest: OriginRequest | undefined;
   setOriginRequest: React.Dispatch<
@@ -27,29 +27,29 @@ interface AppProviderProps {
 }
 
 export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
-  const [estimatedPrice, setEstimatedPrice] = useState<EstimatedPrice>();
+  const [estimatedRide, setEstimatedRide] = useState<EstimatedRide>();
   const [originRequest, setOriginRequest] = useState<OriginRequest>();
   const [destinationRequest, setDestinationRequest] =
     useState<DestinationRequest>();
 
   useEffect(() => {
-    const savedPrice = localStorage.getItem('estimatedPrice');
+    const savedPrice = localStorage.getItem('estimatedRide');
     if (savedPrice) {
-      setEstimatedPrice(JSON.parse(savedPrice));
+      setEstimatedRide(JSON.parse(savedPrice));
     }
   }, []);
 
   useEffect(() => {
-    if (estimatedPrice) {
-      localStorage.setItem('estimatedPrice', JSON.stringify(estimatedPrice));
+    if (estimatedRide) {
+      localStorage.setItem('estimatedRide', JSON.stringify(estimatedRide));
     }
-  }, [estimatedPrice]);
+  }, [estimatedRide]);
 
   return (
     <AppContext.Provider
       value={{
-        estimatedPrice,
-        setEstimatedPrice,
+        estimatedRide,
+        setEstimatedRide,
         originRequest,
         setOriginRequest,
         destinationRequest,
