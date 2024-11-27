@@ -3,7 +3,12 @@ import { PrismaClient } from '@prisma/client'
 import { default as createServiceError } from '../Errors/errors'
 import googleMapsClient from '../config/googleClient'
 import { TDrivers, TDriversPrisma } from '../types/drivers'
-import { TRideData, TRideEstimateResponse } from '../types/rides'
+import {
+  TBodyRideEstimate,
+  TBodyRideHistory,
+  TRideData,
+  TRideEstimateResponse,
+} from '../types/rides'
 
 const prisma = new PrismaClient()
 
@@ -29,6 +34,29 @@ const rideFindAll = async (): Promise<TDriversPrisma> => {
     }))
   } catch (error) {
     throw createServiceError('DRIVER_NOT_FOUND', 'Motoristas não encontrado')
+  }
+}
+
+export const rideCreateHistory = async (body: TBodyRideHistory) => {
+  const { customer_id, origin, destination, distance, duration, driver, value } = body
+  try {
+    await prisma.ride.create({
+      data: {
+        customerId: parseInt(customer_id, 10),
+        origin,
+        destination,
+        distance,
+        duration,
+        driverId: parseInt(driver.id, 10),
+        value,
+      },
+    })
+
+    return { success: true }
+  } catch (error) {
+    console.log(error, 'Error creating')
+
+    throw createServiceError('RIDE_CREATE_ERROR', 'Erro ao criar ride')
   }
 }
 
@@ -70,9 +98,9 @@ const formatResponseRideEstimate = (rideData: TRideData): TRideEstimateResponse 
 }
 
 export const calculateRideEstimate = async (
-  origin: string,
-  destination: string
+  body: TBodyRideEstimate
 ): Promise<TRideEstimateResponse> => {
+  const { origin, destination } = body
   try {
     const { data } = await googleMapsClient.directions({
       params: {
@@ -108,3 +136,5 @@ export const calculateRideEstimate = async (
     )
   }
 }
+
+export const createRideEstimateHistory = async () => {}
