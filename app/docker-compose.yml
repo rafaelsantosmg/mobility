@@ -13,9 +13,11 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
-      timeout: 10s
+      test: ["CMD", "pg_isready", "-U", "postgres", "-d", "mobility_db"]
+      interval: 10s
       retries: 5
+      start_period: 30s
+      timeout: 10s
     networks:
       - app_network
 
