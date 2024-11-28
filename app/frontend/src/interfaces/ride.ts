@@ -10,13 +10,19 @@ export interface DriverTravelRide {
 
 export interface ConfirmRidePayload {
   customer_id: string;
-  origin: string;
-  destination: string;
-  distance: number;
-  duration: string;
+  origin: string | undefined;
+  destination: string | undefined;
+  distance: number | undefined;
+  duration: number | undefined;
   driver: {
-    id: string | number;
+    id: number;
     name: string;
   };
   value: number;
+}
+
+export interface EstimateRidePayload {
+  origin: string;
+  destination: string;
+  customerId: string;
 }

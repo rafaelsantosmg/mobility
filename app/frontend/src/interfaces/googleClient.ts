@@ -87,14 +87,12 @@ interface RouteResponse {
 
 export interface EstimatedResponse {
   data: {
-    estimatedRide: {
-      origin: Location;
-      destination: Location;
-      distance: number;
-      duration: string;
-      options: DriverOption[];
-      routeResponse: RouteResponse;
-    };
+    origin: Location;
+    destination: Location;
+    distance: number;
+    duration: number;
+    options: DriverOption[];
+    routeResponse: RouteResponse;
   };
 }
 
@@ -112,7 +110,23 @@ export interface EstimatedRide {
   origin: Location;
   destination: Location;
   distance: number;
-  duration: string;
+  duration: number;
   options: DriverOption[];
   routeResponse?: RouteResponse;
+}
+
+export interface HistoryRide {
+  createdAt: string;
+  customerId: number;
+  destination: string;
+  distance: number;
+  driver: {
+    id: number;
+    name: string;
+  };
+  driverId: number;
+  duration: number;
+  id: number;
+  origin: string;
+  value: number;
 }
