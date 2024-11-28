@@ -33,7 +33,7 @@ export const rideConfirmSchema = Joi.object({
     'number.min': 'Distância deve ser maior ou igual a 1.',
     'any.required': 'Distância é obrigatória.',
   }),
-  duration: Joi.string().min(1).required().messages({
+  duration: Joi.number().min(1).required().messages({
     'string.empty': 'Duração é obrigatória.',
     'any.required': 'Duração é obrigatória.',
   }),
