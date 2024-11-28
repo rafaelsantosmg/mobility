@@ -1,38 +1,77 @@
 import { Request, Response } from 'express'
 
 import { isServiceError } from '../Errors/errors'
-import { calculateRideEstimate, rideCreateHistory } from '../services/rideService'
+import RideService from '../services/rideService'
 
-export const rideEstimateController = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  try {
-    const response = await calculateRideEstimate(req.body)
+const rideService = RideService()
 
-    res.status(200).json(response)
-  } catch (error) {
-    if (isServiceError(error)) {
-      res.status(404).json({
-        error_code: 'NOT_FOUND',
-        error_description: 'Não foi encontrado um ride com esse ID.',
-      })
+function RideController() {
+  const rideEstimateController = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const response = await rideService.rideEstimate(req.body)
+
+      res.status(200).json(response)
+    } catch (error) {
+      if (isServiceError(error)) {
+        res.status(error.status).json({
+          error_code: error.error_code,
+          error_description: error.error_description,
+        })
+      } else {
+        res.status(500).json({
+          error_code: 'SERVER_ERROR',
+          error_description: 'Ocorreu um erro inesperado.',
+        })
+      }
     }
   }
-}
 
-export const rideConfirmController = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  try {
-    const response = await rideCreateHistory(req.body)
+  const rideConfirmController = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const response = await rideService.rideCreateHistory(req.body)
 
-    res.status(200).json(response)
-  } catch (error) {
-    res.status(404).json({
-      error_code: 'NOT_FOUND',
-      error_description: 'Não foi encontrado um ride com esse ID.',
-    })
+      res.status(200).json(response)
+    } catch (error) {
+      if (isServiceError(error)) {
+        res.status(error.status).json({
+          error_code: error.error_code,
+          error_description: error.error_description,
+        })
+        return
+      } else {
+        res.status(500).json({
+          error_code: 'SERVER_ERROR',
+          error_description: 'Ocorreu um erro inesperado.',
+        })
+      }
+    }
+  }
+
+  const rideGetHistoryController = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const response = await rideService.rideGetHistory(req)
+
+      res.status(200).json(response)
+    } catch (error) {
+      if (isServiceError(error)) {
+        res.status(error.status).json({
+          error_code: error.error_code,
+          error_description: error.error_description,
+        })
+      } else {
+        res.status(500).json({
+          error_code: 'SERVER_ERROR',
+          error_description: 'Ocorreu um erro inesperado.',
+        })
+      }
+    }
+  }
+
+  return {
+    rideEstimateController,
+    rideConfirmController,
+    rideGetHistoryController,
   }
 }
+
+export default RideController
