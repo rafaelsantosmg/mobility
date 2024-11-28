@@ -4,6 +4,7 @@ import React, { useRef } from 'react';
 import * as Yup from 'yup';
 import { useAppContext } from '../hooks/useAppContext';
 import useRide from '../hooks/useRide';
+import LoaderSpinner from './LoaderSpinner';
 
 interface FormValues {
   origin: string;
@@ -12,7 +13,7 @@ interface FormValues {
 }
 
 const DrivingForm: React.FC = () => {
-  const { onEstimateRide } = useRide();
+  const { onEstimateRide, loading } = useRide();
 
   const autocompleteRefs = useRef<{
     origin: google.maps.places.Autocomplete | null;
@@ -50,7 +51,9 @@ const DrivingForm: React.FC = () => {
     customerId: '',
   };
 
-  return (
+  return loading ? (
+    <LoaderSpinner />
+  ) : (
     <Formik
       initialValues={initialValues}
       validationSchema={validationSchema}

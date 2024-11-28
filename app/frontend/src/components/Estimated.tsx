@@ -6,7 +6,6 @@ import { ConfirmRidePayload } from '../interfaces/ride';
 import convertCurrencyPtBr from '../utils/convertCurrencyPtBr';
 import { formatDuration } from '../utils/formatDuration';
 import LoaderSpinner from './LoaderSpinner';
-import ModalConfirm from './ModalConfirm';
 
 const Estimated: React.FC = () => {
   const { estimatedRide, customerId } = useAppContext();
@@ -28,7 +27,7 @@ const Estimated: React.FC = () => {
     onConfirmRide(payload);
   };
 
-  return !estimatedRide ? (
+  return !estimatedRide || loading ? (
     <LoaderSpinner />
   ) : (
     <Fragment>
@@ -95,8 +94,6 @@ const Estimated: React.FC = () => {
           )}
         </div>
       </div>
-
-      <ModalConfirm isOpen={loading} />
     </Fragment>
   );
 };
