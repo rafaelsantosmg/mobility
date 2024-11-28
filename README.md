@@ -61,6 +61,9 @@ Esse comando deve instalar todas as dependencias e subir todos os containers nec
 Não esqueça de renomear os arquivos ```.env.example``` para ```.env``` nas pastas do frontend e backend e adicionar suas informacoes correspondentes
 
 Apos a configuração das variáveis de ambiente! Rode o seguinte comando para subir os containers.
+
+Certifique-se se estar dentro d pasta ``app``` para rodar o script do compose up
+
 ```bash
   cd app
   yarn run compose:up
