@@ -54,12 +54,12 @@ model Ride {
   origin      String
   destination String
   distance    Float
-  duration    String
+  duration    Int
   createdAt   DateTime @default(now()) @map("created_at")
   driverId    Int      @map("driver_id")
   customerId  Int      @map("customer_id")
   value       Float
-  driver      Driver[]
+  driver      Driver   @relation(fields: [driverId], references: [id])
 
   @@map("ride")
 }
