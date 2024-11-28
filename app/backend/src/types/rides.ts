@@ -28,7 +28,7 @@ export type TRideEstimateResponse = {
   origin: TRideLatLng
   destination: TRideLatLng
   distance: number
-  duration: string
+  duration: number
   options: TDrivers
   routeResponse: any
 }
@@ -36,7 +36,7 @@ export type TRideEstimateResponse = {
 export type TRideData = {
   distanceMeters: number
   distanceKm: number
-  duration: string
+  duration: number
   startLocation: {
     lat: number
     lng: number
@@ -59,7 +59,7 @@ export type TBodyRideHistory = {
   origin: string
   destination: string
   distance: number
-  duration: string
+  duration: number
   driver: {
     id: string
     name: string
