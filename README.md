@@ -62,7 +62,7 @@ Não esqueça de renomear os arquivos ```.env.example``` para ```.env``` nas pas
 
 Apos a configuração das variáveis de ambiente! Rode o seguinte comando para subir os containers.
 
-Certifique-se se estar dentro d pasta ``app``` para rodar o script do compose up
+Certifique-se se estar dentro d pasta ```app``` para rodar o script do compose up
 
 ```bash
   cd app
