@@ -9,9 +9,3 @@ printf "\n> Instalando o back-end\n"
 backFolder="./app/backend"
 rm -rf "${backFolder}/node_modules"
 yarn --cwd ${backFolder} install
-
-printf "\n> Subindo os containers com docker-compose\n"
-yarn run compose:up
-
-printf "\n> Adicioando os seeds\n"
-yarn run db:seed

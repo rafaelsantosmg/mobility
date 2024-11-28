@@ -35,13 +35,13 @@ O sistema prioriza a experiência do usuário, garantindo que todos os erros sej
 Clone o projeto
 
 ```bash
-  git clone git@github.com:rafaelsantosmg/project-mobility.git
+  git clone git@github.com:rafaelsantosmg/mobility.git
 ```
 
 Entre no diretório do projeto
 
 ```bash
-  cd project-mobility
+  cd mobility
 ```
 
 Instale e rode o projeto com o script automatizado.
@@ -58,4 +58,12 @@ Esse comando deve instalar todas as dependencias e subir todos os containers nec
   ./apps_install.sh
 ```
 
-Abra seu navegador com caminho "http://localhost:80/" e tudo pronto!
+Não esqueça de renomear os arquivos ```.env.example``` para ```.env``` e adicionar suas informacoes correspondientes
+
+Apos a configuração das variáveis de ambiente! Rode o seguinte comando para subir os containers.
+```bash
+  cd app
+  yarn run compose:up
+```
+
+Abra seu navegador com caminho "http://localhost:80" e tudo pronto!
