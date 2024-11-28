@@ -10,4 +10,4 @@ COPY . .
 
 EXPOSE 8080
 
-CMD ["yarn", "dev"]
+CMD ["sh", "-c", "yarn run prisma:migrate && yarn run seed && yarn dev"]

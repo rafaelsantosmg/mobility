@@ -9,7 +9,7 @@
     "start": "node dist/server.js",
     "seed": "ts-node prisma/seed.ts",
     "prisma:generate": "npx prisma generate",
-    "prisma:migrate": "npx prisma migrate dev"
+    "prisma:migrate": "npx prisma migrate dev --name init"
   },
   "dependencies": {
     "@googlemaps/google-maps-services-js": "^3.4.0",
