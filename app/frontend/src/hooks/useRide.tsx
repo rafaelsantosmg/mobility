@@ -1,57 +1,61 @@
 import axios from 'axios';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { EstimatedResponse } from '../interfaces/googleClient';
-import { ConfirmRidePayload } from '../interfaces/ride';
+import { ConfirmRidePayload, EstimateRidePayload } from '../interfaces/ride';
 import api from '../services';
 import { useAppContext } from './useAppContext';
 
 type UseRideReturn = {
-  origin: string;
-  destination: string;
-  onOriginChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onDestinationChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onEstimateRide: () => Promise<void>;
+  onEstimateRide: (payload: EstimateRidePayload) => Promise<void>;
   onConfirmRide: (payload: ConfirmRidePayload) => Promise<void>;
+  onHistoryRide: () => Promise<void>;
+  onHistoryRideDriverId: (id: number) => Promise<void>;
+  loading: boolean;
 };
 
 const useRide = (): UseRideReturn => {
-  const [origin, setOrigin] = useState<string>('');
-  const [destination, setDestination] = useState<string>('');
-  const { setEstimatedRide, setOriginRequest, setDestinationRequest } =
-    useAppContext();
+  const {
+    setEstimatedRide,
+    setOriginRequest,
+    setDestinationRequest,
+    customerId,
+    setHistoryRide,
+    setHistoryRideDriver,
+  } = useAppContext();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const onOriginChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setOrigin(event.target.value);
-  };
-
-  const onDestinationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setDestination(event.target.value);
-  };
-
-  const onEstimateRide = async () => {
+  const onEstimateRide = useCallback(async (payload: EstimateRidePayload) => {
     try {
-      const request = { origin, destination, customer_id: '1' };
+      setLoading(true);
+      const request = {
+        origin: payload.origin,
+        destination: payload.destination,
+        customer_id: payload.customerId,
+      };
       const { data }: EstimatedResponse = await api.post(
         '/ride/estimate',
         request
       );
       setEstimatedRide({
-        origin: data.estimatedRide.origin,
-        destination: data.estimatedRide.destination,
-        distance: data.estimatedRide.distance,
-        duration: data.estimatedRide.duration,
-        options: data.estimatedRide.options,
-        routeResponse: data.estimatedRide.routeResponse,
+        origin: data.origin,
+        destination: data.destination,
+        distance: data.distance,
+        duration: data.duration,
+        options: data.options,
+        routeResponse: data.routeResponse,
       });
       setOriginRequest({
-        lat: data.estimatedRide.origin.latitude,
-        lng: data.estimatedRide.origin.longitude,
+        lat: data.origin.latitude,
+        lng: data.origin.longitude,
       });
       setDestinationRequest({
-        lat: data.estimatedRide.destination.latitude,
-        lng: data.estimatedRide.destination.longitude,
+        lat: data.destination.latitude,
+        lng: data.destination.longitude,
       });
+      navigate(`/maps`);
     } catch (error: any) {
       if (axios.isAxiosError(error)) {
         if (error.code === 'ERR_NETWORK') {
@@ -66,14 +70,18 @@ const useRide = (): UseRideReturn => {
       } else {
         console.error('Erro não reconhecido:', error);
       }
+    } finally {
+      setLoading(false);
     }
-  };
+  }, []);
 
-  const onConfirmRide = async (payload: ConfirmRidePayload) => {
+  const onConfirmRide = useCallback(async (payload: ConfirmRidePayload) => {
     try {
+      setLoading(true);
       const request = payload;
-      await api.post('/ride/confirm', request);
+      await api.patch('/ride/confirm', request);
       toast.success('Sua viagem foi confirmada com sucesso!');
+      navigate('/history');
     } catch (error: any) {
       if (axios.isAxiosError(error)) {
         if (error.code === 'ERR_NETWORK') {
@@ -88,16 +96,65 @@ const useRide = (): UseRideReturn => {
       } else {
         console.error('Erro não reconhecido:', error);
       }
+    } finally {
+      setLoading(false);
     }
-  };
+  }, []);
+
+  const onHistoryRide = useCallback(async () => {
+    try {
+      setLoading(true);
+      const { data } = await api.get(`/ride/${customerId}`);
+      setHistoryRide(data);
+    } catch (error: any) {
+      if (axios.isAxiosError(error)) {
+        if (error.code === 'ERR_NETWORK') {
+          toast.error(
+            'Erro de conexão. Verifique sua rede ou se o servidor está ativo.'
+          );
+        } else if (error.response) {
+          toast.error(error.response.data.error_description);
+        } else {
+          toast.error('Erro inesperado. Tente novamente.');
+        }
+      } else {
+        console.error('Erro não reconhecido:', error);
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const onHistoryRideDriverId = useCallback(async (id: number) => {
+    try {
+      setLoading(true);
+      const { data } = await api.get(`/ride/${customerId}?driver_id=${id}`);
+      setHistoryRideDriver(data);
+    } catch (error: any) {
+      if (axios.isAxiosError(error)) {
+        if (error.code === 'ERR_NETWORK') {
+          toast.error(
+            'Erro de conexão. Verifique sua rede ou se o servidor está ativo.'
+          );
+        } else if (error.response) {
+          toast.error(error.response.data.error_description);
+        } else {
+          toast.error('Erro inesperado. Tente novamente.');
+        }
+      } else {
+        console.error('Erro não reconhecido:', error);
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   return {
-    origin,
-    destination,
-    onOriginChange,
-    onDestinationChange,
     onEstimateRide,
     onConfirmRide,
+    onHistoryRide,
+    onHistoryRideDriverId,
+    loading,
   };
 };
 
